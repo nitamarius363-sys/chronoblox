@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="same-origin">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; base-uri 'self'; form-action 'self'">
+<title>ChronoBlox 2020</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+/* basic reset */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #1a1a1d;
+  color: #fff;
+  user-select: none;
+  -webkit-user-select: none;
+}
+input, textarea {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* login - classic group photo bg */
+#auth {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #101012 url('login-bg.jpg') center / cover no-repeat;
+  border: 16px solid #2456e6;
+  border-radius: 34px;
+  overflow: hidden;
+  position: relative;
+  color: #111;
+}
+#auth::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 18%;
+  background: linear-gradient(transparent, rgba(0,0,0,.45));
+  pointer-events: none;
+}
+.auth-top { display: none; }
+.auth-wrap {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 26px 16px 0;
+  position: relative;
+  z-index: 1;
+}
+.auth-side { display: none; }
+.mega-logo {
+  font-family: "Arial Black", Arial, sans-serif;
+  font-size: 64px;
+  color: #fff;
+  letter-spacing: -2px;
+  transform: rotate(-4deg);
+  -webkit-text-stroke: 2px #c00;
+  text-shadow:
+    -3px -3px 0 #d11, 3px -3px 0 #d11, -3px 3px 0 #d11, 3px 3px 0 #d11,
+    -3px 0 0 #d11, 3px 0 0 #d11, 0 -3px 0 #d11, 0 3px 0 #d11,
+    5px 6px 0 rgba(0,0,0,.25);
+  margin: 6px 0 14px;
+  text-align: center;
+  line-height: 1;
+}
+.auth-card {
+  width: 360px;
+  background: rgba(255,255,255,.94);
+  border: 3px solid #1a1a1a;
+  border-radius: 10px;
+  padding: 18px 18px 14px;
+  box-shadow: 0 6px 0 rgba(0,0,0,.25);
+  color: #111;
+  margin-top: 150px;
+}
+.auth-card h2 { font-size: 22px; margin-bottom: 2px; color: #111; }
+.auth-card .sub { color: #555; font-size: 13px; margin-bottom: 10px; }
+.auth-tabs { display: flex; background: #ddd; border-radius: 6px; padding: 3px; margin-bottom: 12px; }
+.auth-tabs button {
+  flex: 1; padding: 8px; border: 0; border-radius: 5px;
+  background: transparent; color: #333; cursor: pointer; font-size: 14px; font-weight: 700;
+}
+.auth-tabs button.active { background: #fff; color: #000; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
+.auth-card label { display: block; font-size: 13px; color: #333; margin: 10px 0 4px; font-weight: 700; }
+.auth-card input {
+  width: 100%; padding: 10px 11px; border-radius: 5px;
+  border: 2px solid #888; background: #fff; color: #111; font-size: 15px;
+}
+.auth-card input:focus { outline: none; border-color: #2456e6; }
+.auth-card .go {
+  width: 100%; margin-top: 14px; padding: 11px;
+  border: 2px solid #111; border-radius: 6px; font-size: 17px; font-weight: 900; cursor: pointer;
+}
+#btn-login { background: #00a2ff; color: #fff; }
+#btn-create { background: #00b06f; color: #fff; }
+.auth-foot { text-align: center; color: #444; font-size: 12px; margin-top: 10px; }
+#auth-err { min-height: 18px; color: #c00; font-size: 13px; margin-top: 8px; font-weight: 700; }
+
+/* banned screen */
+#banned {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: #000 url('ban-bg.jpg') center / cover no-repeat;
+}
+.ban-card {
+  max-width: 460px;
+  width: 100%;
+  background: rgba(0,0,0,.82);
+  border: 3px solid #fff;
+  border-radius: 10px;
+  padding: 28px 24px;
+  text-align: center;
+  color: #fff;
+}
+.ban-card h1 { font-size: 26px; margin-bottom: 8px; }
+.ban-card .for { font-size: 18px; font-weight: 700; margin: 6px 0; }
+.ban-card .why { font-size: 15px; color: #ddd; margin-top: 10px; }
+.ban-card button {
+  margin-top: 18px; background: #fff; color: #000; border: 0;
+  border-radius: 6px; padding: 10px 18px; font-weight: 700; cursor: pointer;
+}
+
+/* top bar */
+.topbar {
+  background: #000;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: -1px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.nav { display: flex; gap: 6px; }
+
+.nav button {
+  background: transparent;
+  border: 0;
+  color: #fff;
+  font-size: 15px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.nav button.active, .nav button:hover { background: #2a2a2e; }
+
+.topright { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+
+.me { display: none; }
+.me img { display: none; }
+.me button {
+  background: #222; color: #fff; border: 0; border-radius: 6px;
+  padding: 5px 9px; cursor: pointer; font-size: 13px;
+}
+
+.gear {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+.gear:hover { background: #2a2a2e; }
+.gear img { width: 24px; height: 24px; display: block; }
+
+/* pages */
+.main { padding: 20px 28px; }
+.home-head { display: flex; align-items: center; gap: 14px; margin: 6px 0 8px; }
+.home-head img {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: #000; border: 1px solid #333;
+}
+.home-head h1 { font-size: 28px; }
+.main h1 { font-size: 32px; margin-bottom: 4px; }
+.main h2 { font-size: 19px; margin: 16px 0 12px; }
+.hello { display: flex; align-items: center; gap: 12px; margin: 10px 0 4px; }
+.hello img { width: 64px; height: 64px; border-radius: 8px; background: #000; }
+
+.rowhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.seeall { color: #bbb; font-size: 13px; }
+
+.page { display: none; }
+.page.active { display: block; }
+
+.empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: #aaa;
+  font-size: 18px;
+}
+
+/* settings keeps the black bg you asked for */
+#page-settings {
+  background: #000;
+  min-height: calc(100vh - 52px);
+  margin: 0 -28px;
+  padding: 20px 28px;
+}
+</style>
+</head>
+<body>
+
+<!-- login first, main app hidden till you log in -->
+<div id="auth">
+  <div class="auth-top">ChronoBlox</div>
+  <div class="auth-wrap" style="flex-direction:column">
+    <div class="mega-logo">ChronoBlox</div>
+    <div class="auth-card">
+      <h2 id="auth-title">Log in</h2>
+      <div class="sub">Welcome back.</div>
+      <div class="auth-tabs">
+        <button type="button" id="tab-login" class="active">Log In</button>
+        <button type="button" id="tab-create">Create</button>
+      </div>
+
+      <div id="form-login">
+        <label for="login-user">Username</label>
+        <input id="login-user" maxlength="16" autocomplete="username" placeholder="e.g. builderman">
+        <label for="login-pass">Password</label>
+        <input id="login-pass" type="password" maxlength="64" autocomplete="current-password" placeholder="••••••••">
+        <button type="button" class="go" id="btn-login">Log In</button>
+      </div>
+
+      <div id="form-create" style="display:none">
+        <label for="create-user">Pick a username</label>
+        <input id="create-user" maxlength="16" autocomplete="username" placeholder="3-16 letters, numbers, _">
+        <label for="create-pass">Pick a password</label>
+        <input id="create-pass" type="password" maxlength="64" autocomplete="new-password" placeholder="min 4 chars">
+        <button type="button" class="go" id="btn-create">Create Account</button>
+      </div>
+
+      <div id="auth-err" role="alert"></div>
+      <div class="auth-foot">ChronoBlox 2020 - local test build</div>
+    </div>
+  </div>
+</div>
+
+<div id="banned" style="display:none">
+  <div class="ban-card">
+    <h1>You have been banned for:</h1>
+    <div class="for" id="ban-time">1 day(s)</div>
+    <div style="font-size:14px;color:#bbb">Reason:</div>
+    <div class="why" id="ban-why">No reason given.</div>
+    <button type="button" id="btn-banned-out">Back to login</button>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+<header class="topbar">
+  <div class="logo" id="home-logo" title="Home">ChronoBlox</div>
+
+  <nav class="nav" aria-label="Main">
+    <button type="button" class="active" data-page="discover">Discover</button>
+    <button type="button" data-page="avatar-shop">Avatar Shop</button>
+    <button type="button" data-page="create">Create</button>
+    <button type="button" data-page="robux">Robux</button>
+  </nav>
+
+  <div class="topright">
+    <button type="button" class="gear" id="gear-btn" title="Settings" aria-label="Settings">
+      <img src="chronobloxsettings.png" alt="Settings">
+    </button>
+  </div>
+</header>
+
+<main class="main">
+  <section class="page active" id="page-discover">
+    <div class="home-head">
+      <img src="avatar.png" alt="You">
+      <h1 id="hello-home">Hello!</h1>
+    </div>
+
+    <div class="rowhead"><h2>Popular</h2><span class="seeall">See All &rarr;</span></div>
+    <div class="empty">No games yet.</div>
+
+    <div class="rowhead"><h2>Classics</h2><span class="seeall">See All &rarr;</span></div>
+    <div class="empty">No games yet.</div>
+  </section>
+
+  <section class="page" id="page-avatar-shop">
+    <h1>Avatar Shop</h1>
+    <div class="empty">Nothing here yet.</div>
+  </section>
+
+  <section class="page" id="page-create">
+    <h1>Create</h1>
+    <div class="empty">Nothing here yet.</div>
+  </section>
+
+  <section class="page" id="page-robux">
+    <h1>Robux</h1>
+    <div class="empty">Balance: 0 R$</div>
+  </section>
+
+  <section class="page" id="page-settings">
+    <h1>Settings</h1>
+    <div class="empty">Nothing here yet.</div>
+    <div style="text-align:center;padding-bottom:40px">
+      <button type="button" id="btn-out" style="background:#222;color:#fff;border:0;border-radius:6px;padding:8px 16px;cursor:pointer">Log out</button>
+    </div>
+  </section>
+</main>
+</div>
+
+<script>(function() { var _1a4 = ['discover','avatar-shop','create','robux']; var _1ab = document.querySelector('.nav'); var _276 = document.getElementById('gear-btn'); var _27d = document.getElementById('home-logo'); var _284 = document.getElementById('auth'); var _28b = document.getElementById('app'); var _1b2 = document.getElementById('banned'); var _1b9 = document.getElementById('auth-err'); var _1c0 =''; var _1c7 = false; var _1ce = false; function _1f8(m) { _1b9.textContent = m ||''; } function _1ff(n) { return /^[a-zA-Z0-9_]{3,16}$/.test(n); } function _1e3() { try { return localStorage.getItem('chrono_token') ||''; } catch (e) { return''; } } function _1ea(t) { try { localStorage.setItem('chrono_token', t); } catch (e) {} } function _1f1() { try { localStorage.removeItem('chrono_token'); } catch (e) {} } function _292(path, body) { var headers = {'Content-Type':'application/json'}; var tok = _1e3(); if (tok) headers['Authorization'] ='Bearer '+ tok; return fetch(path, { method:'POST', headers: headers, body: JSON.stringify(body || {}) }).then(function(r) { return r.json().then(function(j) { return { status: r.status, body: j }; }); }); } function _299(path) { var headers = {}; var tok = _1e3(); if (tok) headers['Authorization'] ='Bearer '+ tok; return fetch(path, { headers: headers }).then(function(r) { return r.json(); }); } function _1dc() { try { var d = localStorage.getItem('chrono_device'); if (!d) { d ='d'+ Date.now().toString(36) + Math.random().toString(36).slice(2, 10); localStorage.setItem('chrono_device', d); } return d; } catch (e) { return'nodevice'; } } function _206(rec) { if (!rec || !rec.until) return 0; var left = rec.until - Date.now(); return left > 0 ? left : 0; } function _20d(ms) { var s = Math.floor(ms / 1000); var h = Math.floor(s / 3600), d = Math.floor(h / 24), y = Math.floor(d / 365); if (y > 0) return y +' year(s)'; if (d > 0) return d +' day(s) '+ (h % 24) +'h'; if (h > 0) return h +' hour(s)'; var m = Math.floor(s / 60); return m > 0 ? m +' min(s)': s +' sec(s)'; } function _214(b) { _284.style.display ='none'; _28b.style.display ='none'; _1b2.style.display ='flex'; document.getElementById('ban-time').textContent = _20d(_206(b)); document.getElementById('ban-why').textContent = b.reason ||'No reason given.'; } function _1d5(info) { _214({ until: info.until, reason: info.reason }); } function _222() { return document.querySelectorAll('.page'); } function _229() { var ps = _222(); for (var i = 0; i < ps.length; i++) ps[i].classList.remove('active'); var btns = _1ab.querySelectorAll('button'); for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active'); _276.classList.remove('active'); } function _230(btn) { var btns = _1ab.querySelectorAll('button'); for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active'); if (btn) btn.classList.add('active'); } function _237(name) { var ids = {'discover':'page-discover','avatar-shop':'page-avatar-shop','create':'page-create','robux':'page-robux','settings':'page-settings'}; if (name ==='panel') {if (!_1c7 || !_1ce) { _237('discover'); return; } ids.panel ='page-panel'; } if (!ids[name]) return; _229(); var el = document.getElementById(ids[name]); if (!el) return; el.classList.add('active'); } _1ab.addEventListener('click', function(e) { var btn = e.target.closest ? e.target.closest('button[data-page]') : null; if (!btn) return; var p = btn.getAttribute('data-page'); if (p ==='panel') { if (!_1c7) { _237('discover'); return; } _237('panel'); _230(btn); _24c(); return; } if (_1a4.indexOf(p) === -1) return; _237(p); _230(btn); }); _276.addEventListener('click', function() { _237('settings'); _230(null); _276.classList.add('active'); }); _27d.addEventListener('click', function() { _237('discover'); _230(_1ab.querySelector('button[data-page="discover"]')); }); function _21b(name, isAdmin) { _1c0 = name; _1c7 = !!isAdmin; _284.style.display ='none'; _28b.style.display ='block'; _1b2.style.display ='none'; document.getElementById('hello-home').textContent ='Hello, '+ name +'!'; _237('discover'); _230(_1ab.querySelector('button[data-page="discover"]')); if (_1c7) _23e(); }function _23e() { if (_1ce) return; _1ce = true;_299('/api/panel').then(function(j) { if (!j || !j.html) { _1ce = false; return; } var btn = document.createElement('button'); btn.type ='button'; btn.textContent ='Panel'; btn.setAttribute('data-page','panel'); _1ab.appendChild(btn); var main = document.querySelector('.main'); var tmp = document.createElement('div'); tmp.innerHTML = j.html; var sec = tmp.firstElementChild; var settings = document.getElementById('page-settings'); main.insertBefore(sec, settings); _253(); }).catch(function() { _1ce = false; }); } function _245(m) { var el = document.getElementById('ban-msg'); if (el) el.textContent = m ||''; } function _24c() { var box = document.getElementById('ban-list'); if (!box) return; box.textContent ='Loading...'; _299('/api/bans').then(function(j) { var bans = (j && j.bans) || []; if (!bans.length) { box.textContent ='None.'; return; } box.innerHTML =''; bans.forEach(function(b) { var r = document.createElement('div'); r.style.margin ='6px 0'; var t = document.createElement('span'); var txt = b.name +' - left: '+ _20d(_206(b)); if (b.reason) txt +=' - '+ b.reason; t.textContent = txt; var u = document.createElement('button'); u.textContent ='Unban'; u.style.marginLeft ='10px'; u.addEventListener('click', function() { _292('/api/unban', { target: b.name }).then(function() { _24c(); }); }); r.appendChild(t); r.appendChild(u); box.appendChild(r); }); }).catch(function() { box.textContent ='Backend offline.'; }); } function _253() { var bb = document.getElementById('btn-ban'); if (bb) bb.addEventListener('click', function() { var target = document.getElementById('ban-user').value.trim(); var reason = document.getElementById('ban-reason').value.trim().slice(0, 120); var num = parseInt(document.getElementById('ban-num').value, 10); var unit = document.getElementById('ban-unit').value; if (!_1ff(target)) { _245('Bad username.'); return; } if (!num || num < 1 || num > 9999) { _245('Pick 1-9999.'); return; } if (unit !=='hours'&& unit !=='days'&& unit !=='years') { _245('Pick hours/days/years.'); return; } _245('Banning...'); _292('/api/ban', { target: target, amount: num, unit: unit, reason: reason, deviceId: _1dc() }).then(function(r) { if (r.status === 200) { _245('Banned '+ target +' for '+ num +' '+ unit +'.'); _24c(); } else { _245((r.body && r.body.error) ||'Ban failed.'); } }).catch(function() { _245('Backend offline.'); }); }); var rp = document.getElementById('btn-rp'); if (rp) rp.addEventListener('click', function() { var m = document.getElementById('rp-msg'); var u = document.getElementById('rp-user').value.trim(); var p = document.getElementById('rp-pass').value; _292('/api/resetpw', { target: u, newPassword: p }).then(function(r) { return { s: r.status, j: r.body }; }).then(function(x) { m.textContent = x.s === 200 ?'Password set.': ((x.j && x.j.error) ||'Failed.'); }).catch(function() { m.textContent ='Backend offline.'; }); }); }var _25a = document.getElementById('tab-login'); var _261 = document.getElementById('tab-create'); var _268 = document.getElementById('form-login'); var _26f = document.getElementById('form-create'); _25a.addEventListener('click', function() { _25a.classList.add('active'); _261.classList.remove('active'); _268.style.display ='block'; _26f.style.display ='none'; _1f8(''); document.getElementById('auth-title').textContent ='Log in'; }); _261.addEventListener('click', function() { _261.classList.add('active'); _25a.classList.remove('active'); _26f.style.display ='block'; _268.style.display ='none'; _1f8(''); document.getElementById('auth-title').textContent ='Create account'; }); document.getElementById('btn-create').addEventListener('click', function() { var name = document.getElementById('create-user').value.trim(); var pass = document.getElementById('create-pass').value; if (!_1ff(name)) { _1f8('Username: 3-16 letters, numbers or _.'); return; } if (!pass || pass.length < 4) { _1f8('Password needs at least 4 chars.'); return; } _1f8('Creating...'); _292('/api/register', { username: name, password: pass, deviceId: _1dc() }).then(function(r) { if (r.status === 200) { _1ea(r.body.token); _1f8(''); _21b(r.body.name, !!r.body.isAdmin); } else if (r.body && r.body.error ==='banned') { _1d5(r.body); } else { _1f8((r.body && r.body.error) ||'Could not create account.'); } }).catch(function() { _1f8('Backend offline. Start backend.py.'); }); }); document.getElementById('btn-login').addEventListener('click', function() { var name = document.getElementById('login-user').value.trim(); var pass = document.getElementById('login-pass').value; if (!_1ff(name)) { _1f8('Enter your username.'); return; } if (!pass) { _1f8('Enter your password.'); return; } _1f8('Logging in...'); _292('/api/login', { username: name, password: pass, deviceId: _1dc() }).then(function(r) { if (r.status === 200) { _1ea(r.body.token); _1f8(''); _21b(r.body.name, !!r.body.isAdmin); } else if (r.body && r.body.error ==='banned') { _1d5(r.body); } else { _1f8((r.body && r.body.error) ||'Login failed.'); } }).catch(function() { _1f8('Backend offline. Start backend.py.'); }); }); document.getElementById('btn-out').addEventListener('click', function() { _292('/api/logout', {}).catch(function() {}); _1f1(); location.reload(); }); document.getElementById('btn-banned-out').addEventListener('click', function() { _1f1(); location.reload(); });(function resume() { var tok = _1e3(); if (!tok) return; _299('/api/me').then(function(j) { if (j && j.name) _21b(j.name, !!j.isAdmin); else _1f1(); }).catch(function() {}); })();document.addEventListener('contextmenu', function(e) { e.preventDefault(); }); document.addEventListener('keydown', function(e) { var k = (e.key ||'').toLowerCase(); if (e.key ==='F12') { e.preventDefault(); return; } if ((e.ctrlKey || e.metaKey) && (k ==='u'|| k ==='s')) { e.preventDefault(); return; } if ((e.ctrlKey || e.metaKey) && e.shiftKey && (k ==='i'|| k ==='j'|| k ==='c')) { e.preventDefault(); } }); })();</script>
+</body>
+</html>
